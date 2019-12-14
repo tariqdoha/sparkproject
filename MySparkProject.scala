@@ -89,9 +89,9 @@ object MySparkProject extends App{
 
 	//User may have bought multiple similer items but returned only few of them hence we generate ranks for each scanned items and based on that we delete those
 	
-	sqlContext.sql("drop if exists table ttstage; create table ttstage as select seq_num,product_cd ,rank() (over partition by seq_num,product_cd order by ) as rank from new_tt_tbl")
+	sqlContext.sql("drop if exists table ttstage; create table ttstage as select seq_num,product_cd ,rank() (over partition by seq_num,product_cd order by ) as rnk from new_tt_tbl")
 	
-	sqlContext.sql("drop if exists table ttstagedelete; create table ttstagedelete as select seq_num,product_cd ,rank() (over partition by seq_num,product_cd order by ) as rank from ttdelete")
+	sqlContext.sql("drop if exists table ttstagedelete; create table ttstagedelete as select seq_num,product_cd ,rank() (over partition by seq_num,product_cd order by ) as rnk from ttdelete")
 	
 	sqlContext.sql("insert overwrite table ttstage select stage.* from ttstage stage left join ttstagedelete del on del.seq_num=stage.seq_num and del.product_cd=stage.product_cd and del.rnk=stage.rnk where del.seq_num is null")
 
